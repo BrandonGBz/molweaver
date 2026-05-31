@@ -6,6 +6,14 @@
 
 PyMOL Figure Agent is an open-source API bridge that allows AI agents and scientific users to generate reproducible molecular visualizations with PyMOL for structural bioinformatics, theses, presentations, and publication-ready figures.
 
+<p align="center">
+  <img src="docs/assets/readme-hero.png" alt="PyMOL Figure Agent example molecular renders" width="100%">
+</p>
+
+<p align="center">
+  <b>Generate reproducible molecular figures from JSON prompts, scripts, notebooks, or AI-agent workflows.</b>
+</p>
+
 ## What problem does it solve?
 
 PyMOL is powerful, but reproducible figure generation often depends on manual GUI steps or ad hoc scripts. This project exposes a local FastAPI service so humans, notebooks, and AI coding agents can request consistent molecular renders through JSON.
@@ -122,22 +130,86 @@ Agent JSON:
 
 ## Example outputs
 
-These examples were generated as lightweight PNG assets using public RCSB PDB structures as the protein context. No private coordinates, unpublished structural files, local paths, PyMOL sessions, or generated output folders are included in the repository.
+Reusable rendering recipes help users create whole-enzyme overviews, metal-site figures, ligand-pocket close-ups, docking-style contact maps, translucent surfaces, and large enzyme-complex views without rebuilding every scene by hand in the PyMOL GUI.
 
-| Preview | Public structure | Figure style |
-| --- | --- | --- |
-| <img src="docs/assets/1gyc-publication-cartoon.png" alt="1GYC publication cartoon" width="260"> | [1GYC](https://www.rcsb.org/structure/1GYC) | Clean laccase cartoon with ligands visible. |
-| <img src="docs/assets/1gyc-copper-sites.png" alt="1GYC copper sites" width="260"> | [1GYC](https://www.rcsb.org/structure/1GYC) | Copper-site focus with highlighted coordinating residues. |
-| <img src="docs/assets/1gyc-transparent-surface.png" alt="1GYC transparent surface over cartoon" width="260"> | [1GYC](https://www.rcsb.org/structure/1GYC) | Semi-transparent surface over cartoon for pocket shape and fold context. |
-| <img src="docs/assets/1gyc-docking-focus.png" alt="1GYC docking-style ligand focus" width="260"> | [1GYC](https://www.rcsb.org/structure/1GYC) | Docking-style ligand focus with nearby residues and distance annotations. |
-| <img src="docs/assets/1gyc-copper-pocket-mono.png" alt="1GYC monochrome copper pocket" width="260"> | [1GYC](https://www.rcsb.org/structure/1GYC) | Monochrome enzyme pocket with copper ions as warm accents. |
-| <img src="docs/assets/1kya-laccase-xylidine-pocket.png" alt="1KYA laccase xylidine pocket" width="260"> | [1KYA](https://www.rcsb.org/structure/1KYA) | Laccase with 2,5-xylidine in a translucent active-site surface. |
-| <img src="docs/assets/6lu7-mpro-inhibitor-pocket.png" alt="6LU7 main protease inhibitor pocket" width="260"> | [6LU7](https://www.rcsb.org/structure/6LU7) | Inhibitor-pocket view inspired by molecular docking figures. |
-| <img src="docs/assets/6vmb-atp-synthase-motor.png" alt="6VMB ATP synthase motor overview" width="260"> | [6VMB](https://www.rcsb.org/structure/6VMB) | Large enzyme-complex overview with functional subunits accented. |
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/1gyc-copper-sites.png" alt="Copper-site render" width="100%">
+      <br>
+      <b>Copper-site visualization</b>
+      <br>
+      Highlight catalytic metal centers and nearby structural context in public laccase structures such as <a href="https://www.rcsb.org/structure/1GYC">1GYC</a>.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/1gyc-transparent-surface.png" alt="Transparent surface render" width="100%">
+      <br>
+      <b>Transparent molecular surfaces</b>
+      <br>
+      Show pocket shape while preserving the fold context behind the surface.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/1gyc-docking-focus.png" alt="Docking-style ligand focus" width="100%">
+      <br>
+      <b>Docking-style ligand focus</b>
+      <br>
+      Frame ligands, nearby residues, and distance annotations as a compact visual result.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/6vmb-atp-synthase-motor.png" alt="Large enzyme complex" width="100%">
+      <br>
+      <b>Large enzyme-complex overview</b>
+      <br>
+      Create presentation-ready structural overviews for large public complexes such as <a href="https://www.rcsb.org/structure/6VMB">6VMB</a>.
+    </td>
+  </tr>
+</table>
 
-Design cues used for these renders: one dominant protein color, bright ligand or metal accents, restrained labels, orthoscopic camera, ray tracing, translucent surfaces for binding pockets, and close-up framing when distances matter.
+<details>
+<summary><b>More public example renders</b></summary>
 
-This gallery is meant to show the time saved by reusable rendering recipes: whole-enzyme overviews, metal-site figures, ligand-pocket close-ups, docking-style contact maps, translucent surfaces, and large enzyme-complex views can be regenerated from JSON instead of rebuilt manually in the PyMOL GUI.
+<br>
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/1gyc-publication-cartoon.png" alt="Publication cartoon" width="100%">
+      <br>
+      <b>Publication cartoon</b>
+      <br>
+      A clean full-structure render for public PDB entries such as <a href="https://www.rcsb.org/structure/1GYC">1GYC</a>.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/1kya-laccase-xylidine-pocket.png" alt="Laccase xylidine pocket" width="100%">
+      <br>
+      <b>Laccase ligand pocket</b>
+      <br>
+      Surface and ligand context for public laccase structures such as <a href="https://www.rcsb.org/structure/1KYA">1KYA</a>.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/6lu7-mpro-inhibitor-pocket.png" alt="Main protease inhibitor pocket" width="100%">
+      <br>
+      <b>Inhibitor-pocket view</b>
+      <br>
+      A close-up active-site composition for public inhibitor complexes such as <a href="https://www.rcsb.org/structure/6LU7">6LU7</a>.
+    </td>
+    <td width="50%">
+      <img src="docs/assets/1gyc-copper-pocket-mono.png" alt="Monochrome copper pocket" width="100%">
+      <br>
+      <b>Monochrome pocket style</b>
+      <br>
+      Use one dominant enzyme color with metals and residues as high-contrast accents.
+    </td>
+  </tr>
+</table>
+
+</details>
+
+All examples use public PDB structures. No private coordinates, unpublished research data, local paths, PyMOL sessions, or generated output folders are included in this repository.
 
 Future gallery examples planned include batch comparison panels, mutation-site highlights, electrostatic-style surfaces, residue-distance callouts, before/after preset comparisons, and thesis or manuscript figure templates that use only public or user-approved structures.
 
@@ -156,6 +228,20 @@ Example JSON used for the public `1GYC` transparent surface render:
   "dpi": 220,
   "ray": true
 }
+```
+
+## From prompt to figure
+
+```text
+AI agent / script / notebook
+        ↓
+JSON request
+        ↓
+Local FastAPI bridge
+        ↓
+PyMOL render
+        ↓
+PNG + metadata + reproducible workflow
 ```
 
 ## Limitations
