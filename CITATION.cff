@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software in academic work, please cite it."
+title: "PyMOL Figure Agent"
+version: "0.1.0-alpha"
+date-released: "2026-05-31"
+authors:
+  - family-names: "Gonzalez Baez"
+    given-names: "Brandon"
+license: "Apache-2.0"
+repository-code: "https://github.com/BrandonGBz/pymol-figure-agent"

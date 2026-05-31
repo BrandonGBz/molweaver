@@ -1,0 +1,10 @@
+{
+  "pdb_id": "1GYC",
+  "output_name": "1gyc_publication_cartoon",
+  "preset": "publication_cartoon",
+  "color": "chainbow",
+  "background": "white",
+  "width": 1600,
+  "height": 1200,
+  "ray": true
+}
