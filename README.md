@@ -29,7 +29,7 @@ PyMOL is powerful, but reproducible figure generation often depends on manual GU
 ## Main features
 
 - Render molecular structures through a local API.
-- Load structures from a public PDB ID or local `.pdb`/`.cif` files.
+- Load structures from a public PDB ID or local `.pdb`, `.pqr`, `.pdbqt`, `.cif`, `.mmcif`, `.sdf`, `.mol`, or `.mol2` files.
 - Apply visualization presets such as `publication_cartoon`, `copper_sites`, and `surface`.
 - Generate ray-traced PNG images.
 - Return `image_path` and `image_url` for downstream workflows.

@@ -21,7 +21,18 @@ if not OUTPUT_DIR.is_absolute():
     OUTPUT_DIR = BASE_DIR / OUTPUT_DIR
 OUTPUT_DIR = OUTPUT_DIR.resolve()
 RUNNER = BASE_DIR / "render_job.py"
-ALLOWED_EXTENSIONS = {".pdb", ".ent", ".cif", ".mmcif", ".sdf", ".mol", ".mol2"}
+ALLOWED_EXTENSIONS = {
+    ".pdb",
+    ".ent",
+    ".pqr",
+    ".pdbqt",
+    ".cif",
+    ".mmcif",
+    ".sdf",
+    ".mol",
+    ".mol2",
+}
+PDB_LIKE_EXTENSIONS = {".pqr", ".pdbqt"}
 MAX_FILE_SIZE_MB = int(os.getenv("PYMOL_MAX_FILE_SIZE_MB", "100"))
 
 
@@ -229,6 +240,10 @@ def _prepare_source(request: dict[str, Any], job_dir: Path) -> Path:
             allowed = ", ".join(sorted(ALLOWED_EXTENSIONS))
             raise RenderError(f"Unsupported extension. Use one of: {allowed}", status_code=400)
         _validate_bytes_size(source_path.stat().st_size, label=source_path.name)
+        if source_path.suffix.lower() in PDB_LIKE_EXTENSIONS:
+            normalized = job_dir / f"{source_path.stem}.pdb"
+            normalized.write_bytes(source_path.read_bytes())
+            return normalized
         return source_path
 
     raise RenderError("Missing structure source.", status_code=400)

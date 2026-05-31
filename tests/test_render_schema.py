@@ -36,3 +36,24 @@ def test_prepare_source_rejects_bad_pdb_id(tmp_path: Path) -> None:
 def test_prepare_source_rejects_missing_local_file(tmp_path: Path) -> None:
     with pytest.raises(RenderError):
         _prepare_source({"structure_path": str(tmp_path / "missing.pdb")}, tmp_path)
+
+
+def test_prepare_source_accepts_pdbqt_and_normalizes_to_pdb(tmp_path: Path) -> None:
+    source = tmp_path / "sample.pdbqt"
+    source.write_text(
+        "\n".join(
+            [
+                "ATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00  0.00           N",
+                "HETATM    2 CU    CU E   1       1.000   2.000   3.000  1.00  0.00          Cu",
+                "END",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    normalized = _prepare_source({"structure_path": str(source)}, tmp_path)
+
+    assert normalized.suffix == ".pdb"
+    assert normalized.exists()
+    assert normalized.read_text(encoding="utf-8").startswith("ATOM      1  N   ALA A   1")

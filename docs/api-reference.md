@@ -73,6 +73,8 @@ Use exactly one source:
 - `structure_path`
 - `inline_pdb`
 
+Local `structure_path` inputs support common structure formats including `.pdb`, `.ent`, `.pqr`, `.pdbqt`, `.cif`, `.mmcif`, `.sdf`, `.mol`, and `.mol2`.
+
 ## GET /images/{filename}
 
 Serves a generated PNG from `outputs/images`.
