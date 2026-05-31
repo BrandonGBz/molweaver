@@ -21,7 +21,7 @@ if not OUTPUT_DIR.is_absolute():
     OUTPUT_DIR = BASE_DIR / OUTPUT_DIR
 OUTPUT_DIR = OUTPUT_DIR.resolve()
 RUNNER = BASE_DIR / "render_job.py"
-ALLOWED_EXTENSIONS = {".pdb", ".ent", ".cif", ".mmcif", ".sdf", ".mol", ".mol2", ".pse"}
+ALLOWED_EXTENSIONS = {".pdb", ".ent", ".cif", ".mmcif", ".sdf", ".mol", ".mol2"}
 MAX_FILE_SIZE_MB = int(os.getenv("PYMOL_MAX_FILE_SIZE_MB", "100"))
 
 

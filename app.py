@@ -42,7 +42,7 @@ class LabelSpec(BaseModel):
 
 class RenderRequest(BaseModel):
     pdb_id: str | None = Field(None, description="ID PDB de 4 caracteres; se descarga desde RCSB.")
-    structure_path: str | None = Field(None, description="Ruta local a .pdb, .cif, .mmcif, .sdf, .mol o .pse.")
+    structure_path: str | None = Field(None, description="Ruta local a .pdb, .cif, .mmcif, .sdf, .mol o .mol2.")
     inline_pdb: str | None = Field(None, description="Contenido PDB enviado directamente en JSON.")
     inline_name: str = "inline_structure.pdb"
 

@@ -139,7 +139,7 @@ def _apply_color(cmd: Any, spec: dict[str, Any], obj: str) -> None:
         cmd.color(_color(cmd, color), obj)
 
     cmd.color("orange", f"({obj}) and elem Cu")
-    cmd.color("tv_blue", f"({obj}) and ({METAL_SELECTION}) and not elem Cu")
+    cmd.color("marine", f"({obj}) and ({METAL_SELECTION}) and not elem Cu")
     cmd.color("atomic", f"({obj}) and organic")
 
 

@@ -1,4 +1,4 @@
-name: pymol-agent-bridge
+name: pymol-figure-agent
 channels:
   - conda-forge
 dependencies:
