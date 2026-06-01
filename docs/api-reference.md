@@ -17,7 +17,7 @@ Example response:
   "status": "ok",
   "pymol_available": true,
   "backend": "bundled_conda_pymol2",
-  "backend_command": ["tools/pymol_env/python.exe"],
+  "backend_command": ["<platform-specific tools/pymol_env python>"],
   "message": "PyMOL/pymol2 detected in the local conda environment for this API.",
   "output_dir": "outputs"
 }

@@ -2,15 +2,13 @@ from __future__ import annotations
 
 import json
 import os
-import shutil
 import subprocess
-import sys
 import uuid
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from artifact_export import build_render_script_text
+from backend_discovery import Backend, discover_backend
 from source_resolver import resolve_source
 
 
@@ -22,91 +20,10 @@ OUTPUT_DIR = OUTPUT_DIR.resolve()
 RUNNER = BASE_DIR / "render_job.py"
 MAX_FILE_SIZE_MB = int(os.getenv("PYMOL_MAX_FILE_SIZE_MB", "100"))
 
-
 class RenderError(RuntimeError):
     def __init__(self, message: str, status_code: int = 500) -> None:
         super().__init__(message)
         self.status_code = status_code
-
-
-@dataclass
-class Backend:
-    available: bool
-    kind: str
-    command: list[str]
-    message: str
-    allow_unsafe_commands: bool = False
-
-
-def discover_backend() -> Backend:
-    allow_unsafe = os.getenv("PYMOL_ALLOW_UNSAFE_COMMANDS") == "1"
-    configured = os.getenv("PYMOL_EXECUTABLE")
-    if configured:
-        executable = Path(configured).expanduser()
-        if executable.exists():
-            return Backend(
-                True,
-                "pymol_executable",
-                [str(executable)],
-                "PyMOL detected through PYMOL_EXECUTABLE.",
-                allow_unsafe,
-            )
-        return Backend(
-            False,
-            "missing",
-            [],
-            f"PYMOL_EXECUTABLE points to a missing path: {configured}",
-            allow_unsafe,
-        )
-
-    bundled_python = BASE_DIR / "tools" / "pymol_env" / "python.exe"
-    if bundled_python.exists():
-        return Backend(
-            True,
-            "bundled_conda_pymol2",
-            [str(bundled_python)],
-            "PyMOL/pymol2 detected in the local conda environment for this API.",
-            allow_unsafe,
-        )
-
-    executable = shutil.which("pymol")
-    if executable:
-        return Backend(
-            True,
-            "pymol_executable",
-            [executable],
-            "PyMOL detected in PATH.",
-            allow_unsafe,
-        )
-
-    from importlib.util import find_spec
-
-    if find_spec("pymol2") and _can_import_pymol2():
-        return Backend(
-            True,
-            "python_pymol2",
-            [sys.executable],
-            "pymol2 module available in the Python runtime that runs this API.",
-            allow_unsafe,
-        )
-
-    return Backend(
-        False,
-        "missing",
-        [],
-        (
-            "PyMOL was not found. Install PyMOL with conda-forge or set PYMOL_EXECUTABLE."
-        ),
-        allow_unsafe,
-    )
-
-
-def _can_import_pymol2() -> bool:
-    try:
-        import pymol2  # noqa: F401
-    except Exception:
-        return False
-    return True
 
 
 def render_structure(request: dict[str, Any], *, trusted_script: bool = False) -> dict[str, Any]:

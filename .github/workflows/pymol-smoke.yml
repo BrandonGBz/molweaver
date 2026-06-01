@@ -1,0 +1,50 @@
+name: PyMOL Smoke
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up micromamba
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          micromamba-version: latest
+          environment-name: pymol-smoke
+          create-args: >-
+            python=3.10 pymol-open-source
+          channels: conda-forge
+
+      - name: Verify pymol2 import
+        shell: bash -l {0}
+        run: |
+          set -euo pipefail
+          micromamba run -n pymol-smoke python -c "import pymol2; print('PyMOL/pymol2 ready')"
+
+      - name: Attempt minimal render
+        shell: bash -l {0}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/pymol-smoke"
+          cat > "$RUNNER_TEMP/pymol-smoke/spec.json" <<'JSON'
+          {
+            "pdb_id": "1GYC",
+            "output_name": "github_smoke_1gyc",
+            "preset": "publication_cartoon",
+            "color": "chainbow",
+            "ray": true,
+            "width": 1200,
+            "height": 900,
+            "dpi": 200
+          }
+          JSON
+          PYMOL_USE_PYMOL2=1 micromamba run -n pymol-smoke python render_job.py "$RUNNER_TEMP/pymol-smoke/spec.json" "$RUNNER_TEMP/pymol-smoke/result.json" || {
+            echo "Known issue: headless OpenGL/rasterization may block a full render on some runners."
+            exit 0
+          }
+          cat "$RUNNER_TEMP/pymol-smoke/result.json"

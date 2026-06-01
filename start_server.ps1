@@ -1,3 +1,8 @@
+param(
+    [string]$HostName = $(if ($env:PYMOL_API_HOST) { $env:PYMOL_API_HOST } else { "127.0.0.1" }),
+    [int]$Port = $(if ($env:PYMOL_API_PORT) { [int]$env:PYMOL_API_PORT } else { 8010 })
+)
+
 $ErrorActionPreference = "Stop"
 
 $ApiDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -10,6 +15,4 @@ if (!(Test-Path -LiteralPath $Python)) {
 }
 
 Set-Location $ApiDir
-$HostName = if ($env:PYMOL_API_HOST) { $env:PYMOL_API_HOST } else { "127.0.0.1" }
-$Port = if ($env:PYMOL_API_PORT) { $env:PYMOL_API_PORT } else { "8010" }
 & $Python -m uvicorn app:app --host $HostName --port $Port

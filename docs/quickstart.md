@@ -2,41 +2,28 @@
 
 This guide renders a public structure with the local API.
 
-## 1. Install Python dependencies
+## 1. Install the project
 
-```powershell
-py -3 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-```
+Use the platform guide that matches your system:
 
-## 2. Install PyMOL
+- [Windows](installation-windows.md)
+- [Linux/macOS](installation-unix.md)
 
-Recommended on Windows:
+## 2. Start the server
 
-```powershell
-.\setup_pymol_env.ps1
-```
-
-## 3. Start the server
-
-```powershell
-.\start_server.ps1
-```
-
-Open:
+Open the docs at:
 
 ```text
 http://127.0.0.1:8010/docs
 ```
 
-## 4. Test health
+## 3. Test health
 
 ```powershell
 Invoke-RestMethod -Uri "http://127.0.0.1:8010/health"
 ```
 
-## 5. Render 1GYC
+## 4. Render 1GYC
 
 ```powershell
 $body = @{

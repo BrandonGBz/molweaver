@@ -113,12 +113,15 @@ Current release `v0.2.0`. The API is usable locally and continues to evolve towa
 - Python 3.10+
 - PyMOL Open Source installed through conda-forge
 - micromamba or conda recommended
-- Windows tested
-- Linux support is planned and documented as experimental
+- Windows 10/11: tested and recommended
+- Linux x86_64: supported experimentally
+- macOS Intel and Apple Silicon: supported experimentally
 
 PyMOL is intentionally not installed from `pip` in this project. On Windows, `pip install pymol-open-source` may fail because of native DLL dependencies. Use conda-forge instead.
 
 ## Quick installation
+
+Windows:
 
 ```powershell
 git clone https://github.com/BrandonGBz/pymol-figure-agent.git
@@ -127,10 +130,26 @@ cd pymol-figure-agent
 .\start_server.ps1
 ```
 
-Experimental Linux/macOS install:
+One-command Windows install:
+
+```powershell
+.\install.ps1 -Start
+```
+
+Linux/macOS:
 
 ```bash
+git clone https://github.com/BrandonGBz/pymol-figure-agent.git
+cd pymol-figure-agent
+chmod +x install.sh start_server.sh
 ./install.sh
+./start_server.sh
+```
+
+One-command Linux/macOS install:
+
+```bash
+./install.sh --start
 ```
 
 Open the API docs:
@@ -138,6 +157,13 @@ Open the API docs:
 ```text
 http://127.0.0.1:8010/docs
 ```
+
+| Platform | Status | Notes |
+|---|---|---|
+| Windows 10/11 | Tested | Recommended development path |
+| Linux x86_64 | Supported/experimental | Headless systems may need Xvfb/OpenGL setup |
+| macOS Intel | Supported/experimental | Requires conda-forge PyMOL |
+| macOS Apple Silicon | Supported/experimental | conda-forge has osx-arm64 builds, needs community testing |
 
 ## Quick use
 
