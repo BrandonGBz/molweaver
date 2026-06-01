@@ -7,6 +7,7 @@ from pymol_renderer import RenderError, _prepare_source
 from schemas import (
     AlignmentRequest,
     DistanceRequest,
+    SceneOperation,
     SiteAnalysisRequest,
     StructureSource,
     StructuredSelector,
@@ -63,6 +64,17 @@ def test_alignment_request_rejects_unknown_method() -> None:
             mobile={"pdb_id": "1KYA"},
             method="magic",
         )
+
+
+def test_scene_operation_requires_expected_fields() -> None:
+    operation = SceneOperation(action="show", representation="cartoon", selection="polymer.protein")
+    assert operation.action == "show"
+
+    with pytest.raises(ValidationError):
+        SceneOperation(action="show", selection="polymer.protein")
+
+    with pytest.raises(ValidationError):
+        SceneOperation(action="set_transparency", selection="all")
 
 
 def test_prepare_source_rejects_path_outside_allowed_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

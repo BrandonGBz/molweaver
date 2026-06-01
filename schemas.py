@@ -55,6 +55,62 @@ class LabelSpec(BaseModel):
     text: str = Field("resn + resi", description="Expresion PyMOL o texto fijo entre comillas.")
 
 
+class SceneOperation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    action: Literal[
+        "show",
+        "hide",
+        "color",
+        "remove",
+        "select",
+        "label",
+        "zoom",
+        "orient",
+        "center",
+        "set_representation",
+        "set_background",
+        "set_transparency",
+        "save_png",
+        "save_pse",
+        "save_pml",
+    ]
+    selection: str | None = None
+    target: str | None = None
+    representation: Literal["cartoon", "surface", "sticks", "spheres", "lines"] | None = None
+    color: str | None = None
+    text: str | None = None
+    name: str | None = None
+    buffer: float | None = Field(None, ge=0.0, le=50.0)
+    value: float | None = Field(None, ge=0.0, le=1.0)
+    path: str | None = None
+
+    @model_validator(mode="after")
+    def validate_required_fields(self) -> SceneOperation:
+        if self.action in {"show", "set_representation"} and not self.representation:
+            raise ValueError("scene operation requires representation.")
+        if self.action in {
+            "hide",
+            "remove",
+            "label",
+            "zoom",
+            "orient",
+            "center",
+            "set_transparency",
+        } and not self.selection:
+            raise ValueError("scene operation requires selection.")
+        if self.action in {"color", "set_background"} and not self.color:
+            raise ValueError("scene operation requires color.")
+        if self.action == "select":
+            if not self.name:
+                raise ValueError("scene operation requires name.")
+            if not self.selection:
+                raise ValueError("scene operation requires selection.")
+        if self.action == "set_transparency" and self.value is None:
+            raise ValueError("scene operation requires value.")
+        return self
+
+
 class RenderRequest(StructureSource):
     output_name: str | None = Field(None, description="Nombre base opcional para el PNG.")
     width: int = Field(1600, ge=300, le=5000)
@@ -64,6 +120,9 @@ class RenderRequest(StructureSource):
     transparent: bool = False
     timeout_seconds: int = Field(180, ge=10, le=900)
     render_quality: Literal["balanced", "high", "publication", "ultra"] = "high"
+    export_session: bool = False
+    export_script: bool = True
+    operations: list[SceneOperation] = Field(default_factory=list)
 
     preset: Literal[
         "publication_cartoon",

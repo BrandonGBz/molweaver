@@ -1,0 +1,43 @@
+{
+  "pdb_id": "1GYC",
+  "output_name": "custom_scene_1gyc",
+  "operations": [
+    {
+      "action": "remove",
+      "selection": "solvent"
+    },
+    {
+      "action": "show",
+      "representation": "cartoon",
+      "selection": "polymer.protein"
+    },
+    {
+      "action": "color",
+      "selection": "polymer.protein",
+      "color": "slate"
+    },
+    {
+      "action": "show",
+      "representation": "sticks",
+      "selection": "organic"
+    },
+    {
+      "action": "show",
+      "representation": "spheres",
+      "selection": "elem Cu"
+    },
+    {
+      "action": "label",
+      "selection": "elem Cu",
+      "text": "Cu"
+    },
+    {
+      "action": "zoom",
+      "selection": "organic or elem Cu",
+      "buffer": 6
+    }
+  ],
+  "ray": true,
+  "export_session": true,
+  "export_script": true
+}
