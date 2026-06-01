@@ -25,7 +25,7 @@ from schemas import (
 
 app = FastAPI(
     title="PyMOL Figure Agent",
-    version="0.1.0-alpha",
+    version="0.2.0",
     description=(
         "Local FastAPI bridge for generating reproducible molecular figures "
         "with PyMOL from AI agents or scientific scripts."
@@ -37,7 +37,7 @@ app = FastAPI(
 def root() -> dict[str, object]:
     return {
         "name": "PyMOL Figure Agent",
-        "version": "0.1.0-alpha",
+        "version": "0.2.0",
         "docs": "/docs",
         "openapi": "/openapi.json",
         "endpoints": [
