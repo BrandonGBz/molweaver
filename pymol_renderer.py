@@ -1,18 +1,16 @@
 from __future__ import annotations
 
-import importlib.util
 import json
 import os
-import re
 import shutil
 import subprocess
 import sys
-import urllib.error
-import urllib.request
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+from source_resolver import resolve_source
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -21,18 +19,6 @@ if not OUTPUT_DIR.is_absolute():
     OUTPUT_DIR = BASE_DIR / OUTPUT_DIR
 OUTPUT_DIR = OUTPUT_DIR.resolve()
 RUNNER = BASE_DIR / "render_job.py"
-ALLOWED_EXTENSIONS = {
-    ".pdb",
-    ".ent",
-    ".pqr",
-    ".pdbqt",
-    ".cif",
-    ".mmcif",
-    ".sdf",
-    ".mol",
-    ".mol2",
-}
-PDB_LIKE_EXTENSIONS = {".pqr", ".pdbqt"}
 MAX_FILE_SIZE_MB = int(os.getenv("PYMOL_MAX_FILE_SIZE_MB", "100"))
 
 
@@ -92,7 +78,9 @@ def discover_backend() -> Backend:
             allow_unsafe,
         )
 
-    if importlib.util.find_spec("pymol2") and _can_import_pymol2():
+    from importlib.util import find_spec
+
+    if find_spec("pymol2") and _can_import_pymol2():
         return Backend(
             True,
             "python_pymol2",
@@ -139,7 +127,29 @@ def render_structure(request: dict[str, Any], *, trusted_script: bool = False) -
     job_dir = OUTPUT_DIR / "jobs" / job_id
     job_dir.mkdir(parents=True, exist_ok=True)
 
-    source_path = _prepare_source(request, job_dir)
+    try:
+        source_resolution = resolve_source(request, job_dir)
+    except ValueError as exc:
+        message = str(exc)
+        if "exceeds PYMOL_MAX_FILE_SIZE_MB" in message:
+            raise RenderError(message, status_code=413) from exc
+        if any(
+            token in message
+            for token in (
+                "does not exist",
+                "outside PYMOL_ALLOWED_INPUT_DIR",
+                "Unsupported extension",
+                "Missing structure source.",
+            )
+        ):
+            raise RenderError(message, status_code=400) from exc
+        if any(
+            token in message
+            for token in ("Could not download", "Could not connect", "RCSB returned no data")
+        ):
+            raise RenderError(message, status_code=502) from exc
+        raise RenderError(message, status_code=400) from exc
+    source_path = source_resolution.path
     output_name = _safe_output_name(request.get("output_name") or f"pymol_{job_id}")
     image_path = OUTPUT_DIR / "images" / f"{output_name}.png"
     if image_path.exists():
@@ -190,6 +200,8 @@ def render_structure(request: dict[str, Any], *, trusted_script: bool = False) -
             "dpi": spec["dpi"],
             "ray": spec["ray"],
             "preset": spec.get("preset"),
+            "source": source_resolution.summary,
+            "source_warnings": source_resolution.warnings,
             "job_dir": str(job_dir),
             "stdout_log": str(job_dir / "stdout.log"),
             "stderr_log": str(job_dir / "stderr.log"),
@@ -198,61 +210,20 @@ def render_structure(request: dict[str, Any], *, trusted_script: bool = False) -
 
 
 def _prepare_source(request: dict[str, Any], job_dir: Path) -> Path:
-    if request.get("pdb_id"):
-        pdb_id = str(request["pdb_id"]).strip().upper()
-        if not re.fullmatch(r"[A-Z0-9]{4}", pdb_id):
-            raise RenderError("pdb_id must contain exactly 4 alphanumeric characters.", status_code=400)
-        source_path = job_dir / f"{pdb_id}.pdb"
-        url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
-        try:
-            with urllib.request.urlopen(url, timeout=45) as response:
-                data = response.read()
-        except urllib.error.HTTPError as exc:
-            raise RenderError(f"Could not download {pdb_id} from RCSB: HTTP {exc.code}", 502) from exc
-        except urllib.error.URLError as exc:
-            raise RenderError(f"Could not connect to RCSB to download {pdb_id}: {exc}", 502) from exc
-        if not data:
-            raise RenderError(f"RCSB returned no data for {pdb_id}.", 502)
-        _validate_bytes_size(len(data), label=f"{pdb_id}.pdb")
-        source_path.write_bytes(data)
-        return source_path
-
-    if request.get("inline_pdb"):
-        inline_name = _safe_filename(request.get("inline_name") or "inline_structure.pdb")
-        if Path(inline_name).suffix.lower() not in {".pdb", ".ent"}:
-            inline_name = f"{Path(inline_name).stem}.pdb"
-        source_path = job_dir / inline_name
-        inline_text = str(request["inline_pdb"])
-        _validate_bytes_size(len(inline_text.encode("utf-8")), label=inline_name)
-        source_path.write_text(inline_text, encoding="utf-8")
-        return source_path
-
-    if request.get("structure_path"):
-        source_path = Path(str(request["structure_path"])).expanduser().resolve()
-        if not source_path.exists():
-            raise RenderError(f"structure_path does not exist: {source_path}", status_code=400)
-        allowed_root = os.getenv("PYMOL_ALLOWED_INPUT_DIR")
-        if allowed_root:
-            allowed_path = Path(allowed_root).expanduser().resolve()
-            if not source_path.is_relative_to(allowed_path):
-                raise RenderError("structure_path is outside PYMOL_ALLOWED_INPUT_DIR.", status_code=400)
-        if source_path.suffix.lower() not in ALLOWED_EXTENSIONS:
-            allowed = ", ".join(sorted(ALLOWED_EXTENSIONS))
-            raise RenderError(f"Unsupported extension. Use one of: {allowed}", status_code=400)
-        _validate_bytes_size(source_path.stat().st_size, label=source_path.name)
-        if source_path.suffix.lower() in PDB_LIKE_EXTENSIONS:
-            normalized = job_dir / f"{source_path.stem}.pdb"
-            normalized.write_bytes(source_path.read_bytes())
-            return normalized
-        return source_path
-
-    raise RenderError("Missing structure source.", status_code=400)
-
-
-def _validate_bytes_size(size_bytes: int, *, label: str) -> None:
-    max_bytes = MAX_FILE_SIZE_MB * 1024 * 1024
-    if size_bytes > max_bytes:
-        raise RenderError(f"{label} exceeds PYMOL_MAX_FILE_SIZE_MB={MAX_FILE_SIZE_MB}.", status_code=413)
+    try:
+        return resolve_source(request, job_dir).path
+    except ValueError as exc:
+        message = str(exc)
+        if any(
+            token in message
+            for token in ("does not exist", "outside PYMOL_ALLOWED_INPUT_DIR", "Unsupported extension")
+        ):
+            raise RenderError(message, status_code=400) from exc
+        if "Could not download" in message or "Could not connect" in message or "RCSB returned no data" in message:
+            raise RenderError(message, status_code=502) from exc
+        if "exceeds PYMOL_MAX_FILE_SIZE_MB" in message:
+            raise RenderError(message, status_code=413) from exc
+        raise RenderError(message, status_code=400) from exc
 
 
 def _build_job_spec(
@@ -271,6 +242,7 @@ def _build_job_spec(
         "dpi": int(request.get("dpi") or 300),
         "ray": bool(request.get("ray", True)),
         "transparent": bool(request.get("transparent", False)),
+        "render_quality": request.get("render_quality") or "high",
         "preset": request.get("preset") or "publication_cartoon",
         "representations": request.get("representations") or [],
         "color": request.get("color") or "chainbow",
@@ -305,10 +277,14 @@ def _build_command(backend: Backend, spec_path: Path, result_path: Path) -> tupl
 
 
 def _safe_output_name(value: str) -> str:
+    import re
+
     cleaned = re.sub(r"[^A-Za-z0-9_.-]+", "_", value).strip("._")
     return cleaned[:80] or "pymol_render"
 
 
 def _safe_filename(value: str) -> str:
+    import re
+
     cleaned = Path(value).name
     return re.sub(r"[^A-Za-z0-9_.-]+", "_", cleaned)[:120] or "inline_structure.pdb"

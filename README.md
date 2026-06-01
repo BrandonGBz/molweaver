@@ -35,6 +35,25 @@ PyMOL is powerful, but reproducible figure generation often depends on manual GU
 - Return `image_path` and `image_url` for downstream workflows.
 - Designed for AI-agent workflows and reproducible figure prompts.
 
+## Beyond rendering: agent-ready structural analysis
+
+PyMOL Figure Agent also exposes descriptive structural analysis endpoints for reproducible, geometry-driven workflows.
+
+- `POST /inspect` for structure summaries, chain counts, ligand inventory, and basic composition.
+- `POST /measure/distance` for deterministic atom-to-atom or centroid distances using structured selectors.
+- `POST /analyze/site` for residue neighborhoods around a ligand, metal, or other anchor selection.
+- `POST /align` for reproducible structural alignment with public examples such as `1GYC` and `1KYA`.
+
+These tools are intended for geometric inspection and reporting, not for experimental validation of binding, catalysis, stability, or mechanism.
+
+Example agent prompt:
+
+```text
+Use the local PyMOL API at http://127.0.0.1:8010.
+Inspect public PDB 1GYC, measure the T1 copper distance to its nearest coordinating residue, analyze the copper site, and align 1GYC against 1KYA.
+Return structured JSON plus any artifact paths.
+```
+
 ## Project status
 
 Experimental `v0.1.0-alpha`. The API is usable locally, but interfaces may change before `v1.0.0`.

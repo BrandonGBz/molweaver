@@ -43,6 +43,7 @@ def _render_scene(cmd: Any, spec: dict[str, Any]) -> None:
     cmd.reinitialize()
     cmd.load(spec["input_path"], spec["object_name"])
     obj = spec["object_name"]
+    quality = str(spec.get("render_quality") or "high").lower()
 
     if spec.get("trusted_script"):
         for command in spec.get("trusted_commands", []):
@@ -60,6 +61,23 @@ def _render_scene(cmd: Any, spec: dict[str, Any]) -> None:
     cmd.set("cartoon_smooth_loops", 1)
     cmd.set("sphere_scale", 0.55)
     cmd.set("stick_radius", 0.18)
+
+    if quality in {"high", "publication", "ultra"}:
+        # Publication-style defaults: smoother surface, smoother cartoon and ray-traced outlines.
+        cmd.set("surface_quality", 2)
+        cmd.set("cartoon_sampling", 14)
+        cmd.set("mesh_quality", 2)
+        cmd.set("ray_trace_mode", 1)
+        cmd.set("ray_trace_color", "black")
+        cmd.set("ray_trace_gain", 0.16)
+        cmd.set("ray_trace_fog", 0)
+        cmd.set("ray_trace_fog_start", 0)
+        cmd.set("ray_shadow", 1)
+    else:
+        cmd.set("surface_quality", 1)
+        cmd.set("cartoon_sampling", 10)
+        cmd.set("mesh_quality", 2)
+        cmd.set("ray_trace_mode", 0)
 
     if not spec.get("show_solvent", False):
         cmd.remove(f"({obj}) and solvent")
