@@ -142,7 +142,7 @@ Response:
   "metadata": {
     "backend": "bundled_conda_pymol2",
     "operation": "inspect",
-    "analysis_version": "0.1.0-alpha"
+    "analysis_version": "0.2.0"
   },
   "warnings": [
     "Geometric structural analysis is descriptive only and does not replace experimental validation, docking validation, molecular dynamics, thermodynamic analysis, or biochemical assays."

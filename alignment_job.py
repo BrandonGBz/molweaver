@@ -83,7 +83,7 @@ def _run_alignment(cmd: Any, spec: dict[str, Any]) -> dict[str, Any]:
         "metadata": {
             "operation": "alignment",
             "method": method,
-            "alignment_version": "0.1.0-alpha",
+            "alignment_version": "0.2.0",
         },
         "warnings": [SCIENTIFIC_WARNING],
         "artifacts": artifacts,

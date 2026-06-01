@@ -73,7 +73,7 @@ def _run_analysis(cmd: Any, spec: dict[str, Any]) -> dict[str, Any]:
             "operation": operation,
             "source": spec.get("source_summary"),
             "object_name": obj,
-            "analysis_version": "0.1.0-alpha",
+            "analysis_version": "0.2.0",
         },
         "warnings": [SCIENTIFIC_WARNING],
         "artifacts": artifacts,

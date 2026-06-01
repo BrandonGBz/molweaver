@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/BrandonGBz/pymol-figure-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/BrandonGBz/pymol-figure-agent/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-v0.1.0--alpha-orange.svg)](CHANGELOG.md)
+[![Release](https://img.shields.io/badge/release-v0.2.0-blue.svg)](CHANGELOG.md)
 
 PyMOL Figure Agent is an open-source, local agent-ready PyMOL control layer for molecular visualization, structural inspection, alignment, measurement and reproducible figure generation.
 
@@ -106,7 +106,7 @@ Return structured JSON plus any artifact paths.
 
 ## Project status
 
-Experimental `v0.1.0-alpha`. The API is usable locally, but interfaces may change before `v1.0.0`.
+Current release `v0.2.0`. The API is usable locally and continues to evolve toward a stable `v1.0.0` surface.
 
 ## Requirements
 
@@ -200,9 +200,39 @@ Agent JSON:
 }
 ```
 
-## Example outputs
+## Visual gallery
+
+These figures are meant to look closer to what you would place in a manuscript, thesis, or project landing page: contrasting palettes, transparent surfaces, aligned overlays, and annotated structural views generated locally.
+
+<table>
+  <tr>
+    <td width="33.3%">
+      <img src="docs/assets/1gyc-1kya-superposition.png" alt="Superposition of two similar proteins" width="100%">
+      <br>
+      <b>Protein superposition</b>
+      <br>
+      Structural overlay of two related public proteins with a clean, publication-style color palette.
+    </td>
+    <td width="33.3%">
+      <img src="docs/assets/6lu7-distance-measurement.png" alt="Distance measurement in a ligand pocket" width="100%">
+      <br>
+      <b>Distance measurement</b>
+      <br>
+      A close-up pocket view with a clear distance annotation for common PyMOL analysis workflows.
+    </td>
+    <td width="33.3%">
+      <img src="docs/assets/6lu7-structured-scene.png" alt="Structured molecular scene" width="100%">
+      <br>
+      <b>Structured scene composition</b>
+      <br>
+      A polished example of common molecular scene operations in a single exported figure.
+    </td>
+  </tr>
+</table>
 
 Reusable rendering recipes help users create whole-structure overviews, metal-site figures, ligand-pocket close-ups, docking-style contact maps, translucent surfaces, and large complex views without rebuilding every scene by hand in the PyMOL GUI.
+
+## Example outputs
 
 <table>
   <tr>

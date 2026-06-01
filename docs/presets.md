@@ -40,4 +40,4 @@ Clean cartoon representation.
 
 ## Naming notes
 
-Older design notes may mention `basic_cartoon`, `chainbow`, or `publication_white`. In v0.1.0-alpha, those are represented by the current `publication_cartoon` preset plus `color="chainbow"` and `background="white"`.
+Older design notes may mention `basic_cartoon`, `chainbow`, or `publication_white`. In v0.2.0, those are represented by the current `publication_cartoon` preset plus `color="chainbow"` and `background="white"`.
