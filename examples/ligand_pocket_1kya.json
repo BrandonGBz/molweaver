@@ -1,0 +1,33 @@
+{
+  "pdb_id": "1KYA",
+  "output_name": "ligand_pocket_1kya",
+  "operations": [
+    {
+      "action": "remove",
+      "selection": "solvent"
+    },
+    {
+      "action": "show",
+      "representation": "cartoon",
+      "selection": "polymer.protein"
+    },
+    {
+      "action": "color",
+      "selection": "chain A",
+      "color": "slate"
+    },
+    {
+      "action": "show",
+      "representation": "sticks",
+      "selection": "organic"
+    },
+    {
+      "action": "zoom",
+      "selection": "organic",
+      "buffer": 6
+    }
+  ],
+  "ray": true,
+  "export_session": true,
+  "export_script": true
+}

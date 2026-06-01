@@ -18,12 +18,14 @@ These rules apply to AI coding agents working on PyMOL Figure Agent.
 - Do not expose the API outside `127.0.0.1` by default.
 - Do not enable arbitrary PyMOL command execution unless the user explicitly accepts the risk.
 - Do not add heavy dependencies without explaining why they are needed.
+- Agents should use structured operations whenever possible. Do not use trusted-script or raw PyMOL commands unless explicitly authorized by the user.
 
 ## Examples
 
 - Use public PDB IDs such as `1GYC`.
 - Do not modify examples to use local private paths.
 - Keep generated images out of git unless a maintainer explicitly approves a small public asset.
+- Agents may work with local user-provided molecular files during runtime. These files must not be committed unless they are intentional public examples.
 
 ## Validation
 

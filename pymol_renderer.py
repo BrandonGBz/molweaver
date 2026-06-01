@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from artifact_export import build_render_script_text
 from source_resolver import resolve_source
 
 
@@ -122,6 +123,8 @@ def render_structure(request: dict[str, Any], *, trusted_script: bool = False) -
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     (OUTPUT_DIR / "jobs").mkdir(parents=True, exist_ok=True)
     (OUTPUT_DIR / "images").mkdir(parents=True, exist_ok=True)
+    (OUTPUT_DIR / "sessions").mkdir(parents=True, exist_ok=True)
+    (OUTPUT_DIR / "scripts").mkdir(parents=True, exist_ok=True)
 
     job_id = uuid.uuid4().hex[:12]
     job_dir = OUTPUT_DIR / "jobs" / job_id
@@ -154,8 +157,33 @@ def render_structure(request: dict[str, Any], *, trusted_script: bool = False) -
     image_path = OUTPUT_DIR / "images" / f"{output_name}.png"
     if image_path.exists():
         image_path = OUTPUT_DIR / "images" / f"{output_name}_{job_id}.png"
+    session_path = None
+    if bool(request.get("export_session", False)):
+        session_path = OUTPUT_DIR / "sessions" / f"{output_name}.pse"
+        if session_path.exists():
+            session_path = OUTPUT_DIR / "sessions" / f"{output_name}_{job_id}.pse"
+    script_path = None
+    if request.get("export_script", True):
+        script_path = OUTPUT_DIR / "scripts" / f"{output_name}.pml"
+        if script_path.exists():
+            script_path = OUTPUT_DIR / "scripts" / f"{output_name}_{job_id}.pml"
+
+    if script_path:
+        script_path.write_text(
+            build_render_script_text(
+                request,
+                source_type=source_resolution.source_type,
+                source_summary=source_resolution.summary,
+                source_path=source_path,
+                image_path=image_path,
+                session_path=session_path,
+            ),
+            encoding="utf-8",
+        )
 
     spec = _build_job_spec(request, source_path, image_path, trusted_script=trusted_script)
+    spec["session_path"] = str(session_path) if session_path else None
+    spec["script_path"] = str(script_path) if script_path else None
     spec_path = job_dir / "render_spec.json"
     result_path = job_dir / "render_result.json"
     spec_path.write_text(json.dumps(spec, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -188,11 +216,30 @@ def render_structure(request: dict[str, Any], *, trusted_script: bool = False) -
         raise RenderError(result.get("error", "PyMOL could not render the scene."), status_code=502)
     if not image_path.exists() or image_path.stat().st_size == 0:
         raise RenderError("PyMOL did not create a valid PNG image.", status_code=502)
+    if session_path and (not session_path.exists() or session_path.stat().st_size == 0):
+        raise RenderError("PyMOL did not create a valid session file.", status_code=502)
+    result_warnings = result.get("warnings", [])
+    if not isinstance(result_warnings, list):
+        result_warnings = []
 
+    artifacts = {
+        "image_path": str(image_path),
+        "image_url": f"/images/{image_path.name}",
+        "session_path": str(session_path) if session_path else None,
+        "session_url": f"/sessions/{session_path.name}" if session_path else None,
+        "script_path": str(script_path) if script_path else None,
+        "script_url": f"/scripts/{script_path.name}" if script_path else None,
+    }
     return {
         "job_id": job_id,
         "image_path": str(image_path),
+        "image_url": f"/images/{image_path.name}",
         "source_path": str(source_path),
+        "session_path": str(session_path) if session_path else None,
+        "session_url": f"/sessions/{session_path.name}" if session_path else None,
+        "script_path": str(script_path) if script_path else None,
+        "script_url": f"/scripts/{script_path.name}" if script_path else None,
+        "artifacts": artifacts,
         "metadata": {
             "backend": backend.kind,
             "width": spec["width"],
@@ -202,6 +249,7 @@ def render_structure(request: dict[str, Any], *, trusted_script: bool = False) -
             "preset": spec.get("preset"),
             "source": source_resolution.summary,
             "source_warnings": source_resolution.warnings,
+            "warnings": _dedupe_warnings(source_resolution.warnings + [str(w) for w in result_warnings if w]),
             "job_dir": str(job_dir),
             "stdout_log": str(job_dir / "stdout.log"),
             "stderr_log": str(job_dir / "stderr.log"),
@@ -255,6 +303,7 @@ def _build_job_spec(
         "orient_selection": request.get("orient_selection") or "all",
         "highlights": request.get("highlights") or [],
         "labels": request.get("labels") or [],
+        "operations": request.get("operations") or [],
         "trusted_script": trusted_script,
         "trusted_commands": request.get("trusted_commands") or [],
     }
@@ -288,3 +337,13 @@ def _safe_filename(value: str) -> str:
 
     cleaned = Path(value).name
     return re.sub(r"[^A-Za-z0-9_.-]+", "_", cleaned)[:120] or "inline_structure.pdb"
+
+
+def _dedupe_warnings(warnings: list[str]) -> list[str]:
+    seen: set[str] = set()
+    result: list[str] = []
+    for warning in warnings:
+        if warning and warning not in seen:
+            seen.add(warning)
+            result.append(warning)
+    return result

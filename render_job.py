@@ -7,6 +7,8 @@ import traceback
 from pathlib import Path
 from typing import Any
 
+from scene_operations import apply_scene_operations
+
 
 METAL_SELECTION = "elem Cu+Zn+Fe+Mg+Mn+Ca+Na+K+Co+Ni"
 
@@ -20,13 +22,16 @@ def main() -> None:
             import pymol2
 
             with pymol2.PyMOL() as pymol_instance:
-                _render_scene(pymol_instance.cmd, spec)
+                warnings = _render_scene(pymol_instance.cmd, spec)
         else:
             from pymol import cmd
 
-            _render_scene(cmd, spec)
+            warnings = _render_scene(cmd, spec)
             cmd.quit()
-        _write_result(result_path, {"ok": True, "output_path": spec["output_path"]})
+        _write_result(
+            result_path,
+            {"ok": True, "output_path": spec["output_path"], "warnings": warnings},
+        )
     except Exception as exc:  # PyMOL errors should be returned to the API, not swallowed.
         _write_result(
             result_path,
@@ -39,7 +44,7 @@ def main() -> None:
         raise
 
 
-def _render_scene(cmd: Any, spec: dict[str, Any]) -> None:
+def _render_scene(cmd: Any, spec: dict[str, Any]) -> list[str]:
     cmd.reinitialize()
     cmd.load(spec["input_path"], spec["object_name"])
     obj = spec["object_name"]
@@ -48,8 +53,9 @@ def _render_scene(cmd: Any, spec: dict[str, Any]) -> None:
     if spec.get("trusted_script"):
         for command in spec.get("trusted_commands", []):
             cmd.do(command)
+        _export_session(cmd, spec)
         _finalize_image(cmd, spec)
-        return
+        return []
 
     cmd.viewport(int(spec["width"]), int(spec["height"]))
     cmd.bg_color(_color(cmd, spec.get("background", "white")))
@@ -88,12 +94,15 @@ def _render_scene(cmd: Any, spec: dict[str, Any]) -> None:
     _apply_color(cmd, spec, obj)
     _apply_highlights(cmd, spec, obj)
     _apply_labels(cmd, spec, obj)
+    operation_warnings = apply_scene_operations(cmd, spec.get("operations"), object_name=obj)
 
     orient_selection = spec.get("orient_selection") or "all"
     zoom_selection = spec.get("zoom_selection") or orient_selection
     cmd.orient(orient_selection)
     cmd.zoom(zoom_selection, buffer=4)
+    _export_session(cmd, spec)
     _finalize_image(cmd, spec)
+    return operation_warnings
 
 
 def _apply_preset(cmd: Any, spec: dict[str, Any], obj: str) -> None:
@@ -196,6 +205,18 @@ def _finalize_image(cmd: Any, spec: dict[str, Any]) -> None:
         ray=1 if spec.get("ray", True) else 0,
         quiet=1,
     )
+
+
+def _export_session(cmd: Any, spec: dict[str, Any]) -> None:
+    session_path = spec.get("session_path")
+    if not session_path:
+        return
+
+    path = Path(session_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    cmd.save(str(path))
+    if not path.exists() or path.stat().st_size == 0:
+        raise RuntimeError(f"PyMOL did not create a valid session file at {path}.")
 
 
 def _color(cmd: Any, value: str, *, suffix: str = "") -> str:

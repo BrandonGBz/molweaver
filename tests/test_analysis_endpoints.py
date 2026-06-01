@@ -15,15 +15,40 @@ def test_render_endpoint_can_be_mocked(monkeypatch) -> None:
         lambda request, trusted_script=False: {
             "job_id": "job123",
             "image_path": "K:/tmp/figure.png",
+            "image_url": "/images/figure.png",
             "source_path": "K:/tmp/source.pdb",
+            "session_path": "K:/tmp/figure.pse",
+            "session_url": "/sessions/figure.pse",
+            "script_path": "K:/tmp/figure.pml",
+            "script_url": "/scripts/figure.pml",
+            "artifacts": {
+                "image_path": "K:/tmp/figure.png",
+                "image_url": "/images/figure.png",
+                "session_path": "K:/tmp/figure.pse",
+                "session_url": "/sessions/figure.pse",
+                "script_path": "K:/tmp/figure.pml",
+                "script_url": "/scripts/figure.pml",
+            },
             "metadata": {"backend": "mock", "warnings": []},
         },
     )
 
-    response = client.post("/render", json={"pdb_id": "1GYC"})
+    response = client.post(
+        "/render",
+        json={
+            "pdb_id": "1GYC",
+            "operations": [
+                {"action": "hide", "target": "everything", "selection": "all"},
+                {"action": "show", "representation": "cartoon", "selection": "polymer.protein"},
+            ],
+        },
+    )
 
     assert response.status_code == 200
     assert response.json()["image_path"].endswith("figure.png")
+    assert response.json()["session_path"].endswith("figure.pse")
+    assert response.json()["script_path"].endswith("figure.pml")
+    assert response.json()["artifacts"]["session_url"] == "/sessions/figure.pse"
 
 
 def test_inspect_endpoint_can_be_mocked(monkeypatch) -> None:

@@ -41,7 +41,21 @@ Request:
   "output_name": "1gyc_copper_sites",
   "preset": "copper_sites",
   "color": "chainbow",
+  "operations": [
+    {
+      "action": "hide",
+      "target": "everything",
+      "selection": "all"
+    },
+    {
+      "action": "show",
+      "representation": "cartoon",
+      "selection": "polymer.protein"
+    }
+  ],
   "render_quality": "high",
+  "export_session": true,
+  "export_script": true,
   "ray": true,
   "width": 1600,
   "height": 1200
@@ -55,6 +69,18 @@ Response:
   "job_id": "abc123",
   "image_url": "/images/1gyc_copper_sites.png",
   "image_path": "outputs/images/1gyc_copper_sites.png",
+  "session_url": "/sessions/1gyc_copper_sites.pse",
+  "session_path": "outputs/sessions/1gyc_copper_sites.pse",
+  "script_url": "/scripts/1gyc_copper_sites.pml",
+  "script_path": "outputs/scripts/1gyc_copper_sites.pml",
+  "artifacts": {
+    "image_path": "outputs/images/1gyc_copper_sites.png",
+    "image_url": "/images/1gyc_copper_sites.png",
+    "session_path": "outputs/sessions/1gyc_copper_sites.pse",
+    "session_url": "/sessions/1gyc_copper_sites.pse",
+    "script_path": "outputs/scripts/1gyc_copper_sites.pml",
+    "script_url": "/scripts/1gyc_copper_sites.pml"
+  },
   "source_path": "outputs/jobs/abc123/1GYC.pdb",
   "metadata": {
     "backend": "bundled_conda_pymol2",
@@ -75,6 +101,9 @@ Use exactly one source:
 - `inline_pdb`
 
 Local `structure_path` inputs support common structure formats including `.pdb`, `.ent`, `.pqr`, `.pdbqt`, `.cif`, `.mmcif`, `.sdf`, `.mol`, and `.mol2`.
+
+If `export_session=true`, the API writes a local `.pse` file under `outputs/sessions/`. If `export_script=true`, it writes a reproducible `.pml` file under `outputs/scripts/`.
+If `operations` is provided, it applies structured scene operations such as `show`, `hide`, `color`, `remove`, `select`, `label`, `zoom`, `orient`, `center`, `set_representation`, `set_background`, and `set_transparency`.
 
 ## POST /inspect
 
@@ -219,6 +248,18 @@ When `render=true`, the response can also include an `image_url` artifact for th
 ## GET /images/{filename}
 
 Serves a generated PNG from `outputs/images`.
+
+## GET /sessions/{filename}
+
+Serves a generated PyMOL session from `outputs/sessions`.
+
+Only base filenames ending in `.pse` are accepted.
+
+## GET /scripts/{filename}
+
+Serves a generated reproducible script from `outputs/scripts`.
+
+Only base filenames ending in `.pml` are accepted.
 
 ## Common errors
 

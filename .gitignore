@@ -10,9 +10,12 @@ conda/
 *.pyc
 *.pyo
 *.pse
+*.pml
 outputs/
 renders/
 generated/
+sessions/
+scripts/
 *.log
 *.db
 *.sqlite
@@ -24,3 +27,5 @@ build/
 graphify-out/
 .idea/
 .vscode/
+!examples/**/*.pml
+!docs/**/*.pml

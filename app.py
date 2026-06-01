@@ -49,6 +49,8 @@ def root() -> dict[str, object]:
             "/analyze/site",
             "/align",
             "/images/{filename}",
+            "/sessions/{filename}",
+            "/scripts/{filename}",
         ],
     }
 
@@ -83,6 +85,21 @@ def capabilities() -> dict[str, object]:
         ],
         "representations": ["cartoon", "surface", "sticks", "spheres", "lines"],
         "colors": ["chainbow", "spectrum", "element", "named PyMOL colors", "#RRGGBB"],
+        "scene_operations": [
+            "show",
+            "hide",
+            "color",
+            "remove",
+            "select",
+            "label",
+            "zoom",
+            "orient",
+            "center",
+            "set_representation",
+            "set_background",
+            "set_transparency",
+        ],
+        "artifact_outputs": ["image_png", "session_pse", "reproducible_pml"],
         "analysis_endpoints": ["/inspect", "/measure/distance", "/analyze/site"],
         "alignment_methods": ["align", "super", "cealign"],
         "analysis_policy": "descriptive_geometric_only",
@@ -101,13 +118,7 @@ def render(request: RenderRequest) -> dict[str, object]:
     except RenderError as exc:
         raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
 
-    return {
-        "job_id": result["job_id"],
-        "image_url": f"/images/{Path(result['image_path']).name}",
-        "image_path": result["image_path"],
-        "source_path": result["source_path"],
-        "metadata": _with_request_warnings(result["metadata"], request),
-    }
+    return _render_response(result, request)
 
 
 @app.post("/render/trusted-script")
@@ -123,13 +134,7 @@ def render_trusted_script(request: TrustedScriptRequest) -> dict[str, object]:
     except RenderError as exc:
         raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
 
-    return {
-        "job_id": result["job_id"],
-        "image_url": f"/images/{Path(result['image_path']).name}",
-        "image_path": result["image_path"],
-        "source_path": result["source_path"],
-        "metadata": _with_request_warnings(result["metadata"], request),
-    }
+    return _render_response(result, request)
 
 
 @app.post("/inspect")
@@ -166,11 +171,29 @@ def align_endpoint(request: AlignmentRequest) -> dict[str, object]:
 
 @app.get("/images/{filename}")
 def image(filename: str) -> FileResponse:
-    safe_name = Path(filename).name
-    image_path = OUTPUT_DIR / "images" / safe_name
-    if not image_path.exists() or image_path.suffix.lower() != ".png":
-        raise HTTPException(status_code=404, detail="Imagen no encontrada.")
-    return FileResponse(image_path, media_type="image/png", filename=safe_name)
+    return _serve_file(OUTPUT_DIR / "images", filename, ".png", "image/png", "Imagen no encontrada.")
+
+
+@app.get("/sessions/{filename}")
+def session_file(filename: str) -> FileResponse:
+    return _serve_file(
+        OUTPUT_DIR / "sessions",
+        filename,
+        ".pse",
+        "application/octet-stream",
+        "Sesión no encontrada.",
+    )
+
+
+@app.get("/scripts/{filename}")
+def script_file(filename: str) -> FileResponse:
+    return _serve_file(
+        OUTPUT_DIR / "scripts",
+        filename,
+        ".pml",
+        "text/plain; charset=utf-8",
+        "Script no encontrado.",
+    )
 
 
 def _validate_source_count(*sources: object) -> None:
@@ -195,3 +218,45 @@ def _with_request_warnings(
         warnings.append("Local structure_path was used; verify it does not reference private data before sharing logs.")
     enriched["warnings"] = warnings
     return enriched
+
+
+def _render_response(result: dict[str, object], request: RenderRequest | TrustedScriptRequest) -> dict[str, object]:
+    image_path = str(result["image_path"])
+    image_url = str(result.get("image_url") or f"/images/{Path(image_path).name}")
+    session_path = result.get("session_path")
+    session_path_text = str(session_path) if session_path else None
+    session_url = None
+    if session_path_text:
+        session_url = str(result.get("session_url") or f"/sessions/{Path(session_path_text).name}")
+    script_path = result.get("script_path")
+    script_path_text = str(script_path) if script_path else None
+    script_url = None
+    if script_path_text:
+        script_url = str(result.get("script_url") or f"/scripts/{Path(script_path_text).name}")
+    artifacts = dict(result.get("artifacts") or {})
+    artifacts.setdefault("image_path", image_path)
+    artifacts.setdefault("image_url", image_url)
+    artifacts.setdefault("session_path", session_path_text)
+    artifacts.setdefault("session_url", session_url)
+    artifacts.setdefault("script_path", script_path_text)
+    artifacts.setdefault("script_url", script_url)
+    return {
+        "job_id": result["job_id"],
+        "image_url": image_url,
+        "image_path": image_path,
+        "session_path": session_path_text,
+        "session_url": session_url,
+        "script_path": script_path_text,
+        "script_url": script_url,
+        "source_path": result["source_path"],
+        "artifacts": artifacts,
+        "metadata": _with_request_warnings(result["metadata"], request),
+    }
+
+
+def _serve_file(base_dir: Path, filename: str, suffix: str, media_type: str, detail: str) -> FileResponse:
+    safe_name = Path(filename).name
+    file_path = base_dir / safe_name
+    if not file_path.exists() or file_path.suffix.lower() != suffix:
+        raise HTTPException(status_code=404, detail=detail)
+    return FileResponse(file_path, media_type=media_type, filename=safe_name)
