@@ -1,22 +1,27 @@
 from __future__ import annotations
 
-import re
 from pathlib import Path
-from typing import Literal
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field, field_validator
 
+import alignment_tools
+import structure_analyzer
 from pymol_renderer import (
     OUTPUT_DIR,
     RenderError,
     discover_backend,
     render_structure,
 )
-
-
-OUTPUT_NAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$")
+from schemas import (
+    AlignmentRequest,
+    DistanceRequest,
+    InspectRequest,
+    RenderRequest,
+    SiteAnalysisRequest,
+    TrustedScriptRequest,
+    validate_output_name,
+)
 
 app = FastAPI(
     title="PyMOL Figure Agent",
@@ -28,82 +33,6 @@ app = FastAPI(
 )
 
 
-class Highlight(BaseModel):
-    selection: str = Field(..., description="Seleccion PyMOL, por ejemplo: resn CU or elem Cu")
-    color: str = Field("yellow", description="Color PyMOL o hexadecimal, por ejemplo yellow o #ff8800")
-    representation: Literal["sticks", "spheres", "surface", "cartoon", "lines"] = "sticks"
-    label: str | None = Field(None, description="Texto fijo para etiquetar la seleccion.")
-
-
-class LabelSpec(BaseModel):
-    selection: str
-    text: str = Field("resn + resi", description="Expresion PyMOL o texto fijo entre comillas.")
-
-
-class RenderRequest(BaseModel):
-    pdb_id: str | None = Field(None, description="ID PDB de 4 caracteres; se descarga desde RCSB.")
-    structure_path: str | None = Field(None, description="Ruta local a .pdb, .cif, .mmcif, .sdf, .mol o .mol2.")
-    inline_pdb: str | None = Field(None, description="Contenido PDB enviado directamente en JSON.")
-    inline_name: str = "inline_structure.pdb"
-
-    output_name: str | None = Field(None, description="Nombre base opcional para el PNG.")
-    width: int = Field(1600, ge=300, le=5000)
-    height: int = Field(1200, ge=300, le=5000)
-    dpi: int = Field(300, ge=72, le=1200)
-    ray: bool = True
-    transparent: bool = False
-    timeout_seconds: int = Field(180, ge=10, le=900)
-
-    preset: Literal[
-        "publication_cartoon",
-        "ligand_focus",
-        "surface",
-        "active_site",
-        "copper_sites",
-        "minimal",
-    ] = "publication_cartoon"
-    representations: list[Literal["cartoon", "surface", "sticks", "spheres", "lines"]] = Field(
-        default_factory=list
-    )
-    color: str = Field("chainbow", description="chainbow, spectrum, element, o color PyMOL/hex.")
-    background: str = "white"
-    show_ligands: bool = True
-    show_metals: bool = True
-    show_solvent: bool = False
-    surface_transparency: float = Field(0.35, ge=0.0, le=1.0)
-    zoom_selection: str = "all"
-    orient_selection: str = "all"
-    highlights: list[Highlight] = Field(default_factory=list)
-    labels: list[LabelSpec] = Field(default_factory=list)
-
-    @field_validator("output_name")
-    @classmethod
-    def validate_output_name(cls, value: str | None) -> str | None:
-        return _validate_output_name(value)
-
-
-class TrustedScriptRequest(BaseModel):
-    structure_path: str | None = None
-    pdb_id: str | None = None
-    inline_pdb: str | None = None
-    commands: list[str] = Field(
-        ...,
-        min_length=1,
-        description="Comandos PyMOL. Requiere PYMOL_ALLOW_UNSAFE_COMMANDS=1.",
-    )
-    output_name: str | None = None
-    width: int = Field(1600, ge=300, le=5000)
-    height: int = Field(1200, ge=300, le=5000)
-    dpi: int = Field(300, ge=72, le=1200)
-    ray: bool = True
-    timeout_seconds: int = Field(180, ge=10, le=900)
-
-    @field_validator("output_name")
-    @classmethod
-    def validate_output_name(cls, value: str | None) -> str | None:
-        return _validate_output_name(value)
-
-
 @app.get("/")
 def root() -> dict[str, object]:
     return {
@@ -111,7 +40,16 @@ def root() -> dict[str, object]:
         "version": "0.1.0-alpha",
         "docs": "/docs",
         "openapi": "/openapi.json",
-        "endpoints": ["/health", "/capabilities", "/render", "/images/{filename}"],
+        "endpoints": [
+            "/health",
+            "/capabilities",
+            "/render",
+            "/inspect",
+            "/measure/distance",
+            "/analyze/site",
+            "/align",
+            "/images/{filename}",
+        ],
     }
 
 
@@ -145,6 +83,9 @@ def capabilities() -> dict[str, object]:
         ],
         "representations": ["cartoon", "surface", "sticks", "spheres", "lines"],
         "colors": ["chainbow", "spectrum", "element", "named PyMOL colors", "#RRGGBB"],
+        "analysis_endpoints": ["/inspect", "/measure/distance", "/analyze/site"],
+        "alignment_methods": ["align", "super", "cealign"],
+        "analysis_policy": "descriptive_geometric_only",
         "safe_by_default": True,
         "trusted_script_endpoint_enabled": backend.allow_unsafe_commands,
     }
@@ -191,6 +132,38 @@ def render_trusted_script(request: TrustedScriptRequest) -> dict[str, object]:
     }
 
 
+@app.post("/inspect")
+def inspect_endpoint(request: InspectRequest) -> dict[str, object]:
+    try:
+        return structure_analyzer.inspect_structure(request)
+    except RenderError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
+
+
+@app.post("/measure/distance")
+def measure_distance_endpoint(request: DistanceRequest) -> dict[str, object]:
+    try:
+        return structure_analyzer.measure_distance(request)
+    except RenderError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
+
+
+@app.post("/analyze/site")
+def analyze_site_endpoint(request: SiteAnalysisRequest) -> dict[str, object]:
+    try:
+        return structure_analyzer.analyze_site(request)
+    except RenderError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
+
+
+@app.post("/align")
+def align_endpoint(request: AlignmentRequest) -> dict[str, object]:
+    try:
+        return alignment_tools.align_structures(request)
+    except RenderError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
+
+
 @app.get("/images/{filename}")
 def image(filename: str) -> FileResponse:
     safe_name = Path(filename).name
@@ -210,17 +183,7 @@ def _validate_source_count(*sources: object) -> None:
 
 
 def _validate_output_name(value: str | None) -> str | None:
-    if value is None:
-        return value
-    text = value.strip()
-    if not text:
-        raise ValueError("output_name no puede estar vacio.")
-    path = Path(text)
-    if path.is_absolute() or path.name != text or ".." in path.parts or any(sep in text for sep in ("/", "\\")):
-        raise ValueError("output_name debe ser solo un nombre base, no una ruta.")
-    if not OUTPUT_NAME_PATTERN.fullmatch(text):
-        raise ValueError("output_name solo puede usar letras, numeros, guion, guion bajo y punto.")
-    return text
+    return validate_output_name(value)
 
 
 def _with_request_warnings(

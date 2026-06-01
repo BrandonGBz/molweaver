@@ -1,6 +1,6 @@
 # Agent Usage
 
-AI coding agents can use this API as a local tool for reproducible molecular figures.
+AI coding agents can use this API as a local-first tool for reproducible molecular figures and geometric structural summaries.
 
 ## Agent system hint
 
@@ -16,6 +16,17 @@ Return image_path and image_url after rendering.
 ```text
 Load PDB 1GYC, apply copper_sites preset, render high-quality PNG and return path.
 ```
+
+## Beyond rendering
+
+The same API also supports agent-friendly structural analysis:
+
+- `POST /inspect` for atom counts, chain summaries, and ligand or metal inventory.
+- `POST /measure/distance` for structured distances between atoms, residues, ligands, or metal centers.
+- `POST /analyze/site` for geometric neighborhoods around a site of interest.
+- `POST /align` for reproducible structural alignment using public PDB structures such as `1GYC` and `1KYA`.
+
+These endpoints are descriptive and geometric. They should not be presented as biochemical validation or mechanistic proof.
 
 ## Example request
 
@@ -53,3 +64,5 @@ print(response.json())
 - Use `structure_path` only when the user explicitly provides a local file.
 - Never echo private paths in public documentation or commits.
 - Do not use `/render/trusted-script` unless a human explicitly enables it and accepts the risk.
+- Keep selectors structured and avoid free-form PyMOL command strings.
+- Treat geometry metrics, distances, and alignments as descriptive outputs.

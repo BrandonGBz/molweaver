@@ -1,0 +1,12 @@
+{
+  "source": {
+    "pdb_id": "1GYC"
+  },
+  "selector_a": {
+    "element": "Cu"
+  },
+  "selector_b": {
+    "organic": true
+  },
+  "export_pml": false
+}

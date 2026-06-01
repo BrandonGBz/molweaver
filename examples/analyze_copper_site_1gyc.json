@@ -1,0 +1,11 @@
+{
+  "source": {
+    "pdb_id": "1GYC"
+  },
+  "center": {
+    "element": "Cu"
+  },
+  "radius_angstrom": 5.5,
+  "include_solvent": false,
+  "export_pml": false
+}
