@@ -1,6 +1,6 @@
 # Architecture
 
-PyMOL Figure Agent is a local FastAPI bridge around PyMOL.
+MolWeaver is a local FastAPI bridge around PyMOL.
 
 ## Components
 

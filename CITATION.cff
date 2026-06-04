@@ -1,14 +1,15 @@
 cff-version: 1.2.0
-message: "If you use PyMOL Figure Agent in academic work, please cite it."
+message: "If you use MolWeaver in academic work, please cite it."
 type: software
-title: "PyMOL Figure Agent"
+title: "MolWeaver"
 version: "0.2.0"
 date-released: "2026-06-01"
 authors:
   - family-names: "Gonzalez-Baez"
     given-names: "Brandon"
-abstract: "PyMOL Figure Agent is an open-source, local agent-ready control layer for PyMOL that enables AI agents, scripts and notebooks to build, modify, analyze, align, render and export molecular scenes through structured API operations."
+abstract: "MolWeaver is an open-source, local agent-ready control layer for PyMOL that enables AI agents, scripts and notebooks to build, modify, analyze, align, render and export molecular scenes through structured API operations."
 keywords:
+  - MolWeaver
   - PyMOL
   - structural biology
   - molecular visualization
@@ -21,5 +22,5 @@ keywords:
   - molecular docking
   - molecular dynamics
 license: "Apache-2.0"
-repository-code: "https://github.com/BrandonGBz/pymol-figure-agent"
-url: "https://github.com/BrandonGBz/pymol-figure-agent"
+repository-code: "https://github.com/BrandonGBz/molweaver"
+url: "https://github.com/BrandonGBz/molweaver"

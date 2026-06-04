@@ -1,6 +1,8 @@
-# PyMOL Figure Agent
+# MolWeaver
 
-[![CI](https://github.com/BrandonGBz/pymol-figure-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/BrandonGBz/pymol-figure-agent/actions/workflows/ci.yml)
+**Formerly PyMOL Figure Agent.**
+
+[![CI](https://github.com/BrandonGBz/molweaver/actions/workflows/ci.yml/badge.svg)](https://github.com/BrandonGBz/molweaver/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/badge/release-v0.2.0-blue.svg)](CHANGELOG.md)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -9,12 +11,12 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Citation](https://img.shields.io/badge/citation-CITATION.cff-blue.svg)](CITATION.cff)
 
-PyMOL Figure Agent is an open-source, local agent-ready PyMOL control layer for molecular visualization, structural inspection, alignment, measurement and reproducible figure generation.
+MolWeaver is an open-source, local agent-ready control layer for PyMOL-driven molecular visualization, structural inspection, alignment, measurement, scene construction and reproducible artifact export.
 
 This project is not limited to a specific protein family, ligand type, metal site or research topic. Public examples such as `1GYC`, `1KYA`, `6LU7` and `6VMB` are included only to demonstrate reproducible workflows. Users can run the API locally with their own structures, ligands, docking poses, models, trajectories or PyMOL-compatible files.
 
 <p align="center">
-  <img src="docs/assets/readme-hero.png" alt="PyMOL Figure Agent example molecular renders" width="100%">
+  <img src="docs/assets/readme-hero.png" alt="MolWeaver example molecular renders" width="100%">
 </p>
 
 <p align="center">
@@ -46,7 +48,7 @@ PyMOL is powerful, but reproducible molecular scene building often depends on ma
 
 ## Beyond rendering: agent-ready structural analysis
 
-PyMOL Figure Agent also exposes descriptive structural analysis endpoints for reproducible, geometry-driven workflows.
+MolWeaver also exposes descriptive structural analysis endpoints for reproducible, geometry-driven workflows.
 
 - `POST /inspect` for structure summaries, chain counts, ligand inventory, and basic composition.
 - `POST /measure/distance` for deterministic atom-to-atom or centroid distances using structured selectors.
@@ -55,7 +57,7 @@ PyMOL Figure Agent also exposes descriptive structural analysis endpoints for re
 
 These tools are intended for geometric inspection and reporting, not for experimental validation of binding, catalysis, stability, or mechanism.
 
-PyMOL Figure Agent lets AI agents build molecular scenes through structured PyMOL operations, including rendering, coloring, hiding, removing selections, labeling, measuring distances, aligning structures and exporting editable sessions.
+MolWeaver lets AI agents build molecular scenes through structured PyMOL operations, including rendering, coloring, hiding, removing selections, labeling, measuring distances, aligning structures and exporting editable sessions.
 
 See also: [docs/scene-operations.md](docs/scene-operations.md)
 
@@ -127,8 +129,8 @@ PyMOL is intentionally not installed from `pip` in this project. On Windows, `pi
 Windows:
 
 ```powershell
-git clone https://github.com/BrandonGBz/pymol-figure-agent.git
-cd pymol-figure-agent
+git clone https://github.com/BrandonGBz/molweaver.git
+cd molweaver
 .\install.ps1
 .\start_server.ps1
 ```
@@ -142,8 +144,8 @@ One-command Windows install:
 Linux/macOS:
 
 ```bash
-git clone https://github.com/BrandonGBz/pymol-figure-agent.git
-cd pymol-figure-agent
+git clone https://github.com/BrandonGBz/molweaver.git
+cd molweaver
 chmod +x install.sh start_server.sh
 ./install.sh
 ./start_server.sh
@@ -409,9 +411,17 @@ molecular dynamics, and agent automation workflows.
 - Future: virtual screening workflows, molecular dynamics snapshot rendering, agent automation rules.
 - `v1.0.0`: stable public release.
 
+## Project rename
+
+PyMOL Figure Agent started as a figure-generation API. The project has since evolved
+into a broader local control layer for agent-driven molecular scene construction,
+structural analysis, alignment, measurement, editable PyMOL sessions, reproducible
+scripts and future docking/MD workflows. The project is now named **MolWeaver** to
+reflect this broader scope. See [docs/rename.md](docs/rename.md) for details.
+
 ## Citation
 
-If you use PyMOL Figure Agent in academic work, please cite the software using the metadata in [CITATION.cff](CITATION.cff). A Zenodo DOI will be added after the first archived GitHub release is published through Zenodo. See [docs/zenodo.md](docs/zenodo.md) for details.
+If you use MolWeaver in academic work, please cite the software using the metadata in [CITATION.cff](CITATION.cff). A Zenodo DOI will be added after the first archived GitHub release is published through Zenodo. See [docs/zenodo.md](docs/zenodo.md) for details.
 
 ## License
 
@@ -419,4 +429,4 @@ Apache License 2.0. See [LICENSE](LICENSE).
 
 ## Disclaimer
 
-This project is not affiliated with, endorsed by, or sponsored by Schrodinger or the official PyMOL project. Users must comply with the licenses of PyMOL and all third-party dependencies.
+MolWeaver is not affiliated with, endorsed by, or sponsored by Schrödinger or the official PyMOL project. Users must comply with the licenses of PyMOL and all third-party dependencies.

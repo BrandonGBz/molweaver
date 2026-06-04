@@ -1,6 +1,6 @@
 # Structured PyMOL Operations
 
-PyMOL Figure Agent is designed as a local agent-ready control layer for PyMOL. The goal is not just to render presets, but to let an agent translate natural-language instructions into controlled JSON operations that PyMOL can execute locally.
+MolWeaver is designed as a local agent-ready control layer for PyMOL. The goal is not just to render presets, but to let an agent translate natural-language instructions into controlled JSON operations that PyMOL can execute locally.
 
 ## Purpose
 

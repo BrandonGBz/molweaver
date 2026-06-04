@@ -1,6 +1,6 @@
 # Agent prompt recipes
 
-Quick-start prompt recipes for AI agents using the PyMOL Figure Agent API.
+Quick-start prompt recipes for AI agents using the MolWeaver API.
 For detailed recipes with expected API behavior, endpoint guidance, and notes,
 see [docs/agent-prompt-recipes.md](../docs/agent-prompt-recipes.md).
 

@@ -1,6 +1,6 @@
 # Code of Conduct
 
-PyMOL Figure Agent is a scientific software project. We expect respectful, professional collaboration.
+MolWeaver is a scientific software project. We expect respectful, professional collaboration.
 
 ## Expected behavior
 

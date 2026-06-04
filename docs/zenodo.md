@@ -1,6 +1,6 @@
 # Zenodo DOI and citation
 
-PyMOL Figure Agent can be archived on Zenodo through GitHub releases.
+MolWeaver can be archived on Zenodo through GitHub releases.
 Once a GitHub release is created and the Zenodo GitHub integration is enabled,
 Zenodo will assign a DOI automatically.
 

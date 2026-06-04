@@ -1,6 +1,6 @@
 # Agent Instructions
 
-These rules apply to AI coding agents working on PyMOL Figure Agent.
+These rules apply to AI coding agents working on MolWeaver.
 
 ## Operating mode
 

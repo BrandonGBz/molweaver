@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- Project renamed from PyMOL Figure Agent to MolWeaver to reflect its broader scope
+  beyond figure generation.
+
 ## [0.2.0] - 2026-06-01
 
 ### Added

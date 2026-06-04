@@ -1,7 +1,7 @@
 [project]
-name = "pymol-figure-agent"
-version = "0.2.0"
-description = "Open-source FastAPI bridge for reproducible PyMOL molecular figures."
+name = "molweaver"
+version = "0.3.0a0"
+description = "Local agent-ready control layer for PyMOL molecular visualization and structural workflows."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }

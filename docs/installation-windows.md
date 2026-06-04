@@ -5,8 +5,8 @@ Windows 10/11 is the recommended development path and has been tested locally.
 ## Quick install
 
 ```powershell
-git clone https://github.com/BrandonGBz/pymol-figure-agent.git
-cd pymol-figure-agent
+git clone https://github.com/BrandonGBz/molweaver.git
+cd molweaver
 .\install.ps1
 .\start_server.ps1
 ```

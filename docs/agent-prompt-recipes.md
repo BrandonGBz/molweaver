@@ -1,6 +1,6 @@
 # AI agent prompt recipes
 
-This document shows how users can ask an AI agent to use the local PyMOL Figure Agent API
+This document shows how users can ask an AI agent to use the local MolWeaver API
 to build, modify, analyze, align, render, and export molecular scenes.
 Each recipe includes a goal, a natural-language user prompt, expected API behavior,
 suggested endpoints, and relevant notes.
@@ -10,7 +10,7 @@ suggested endpoints, and relevant notes.
 **Goal:** Render a clean protein figure with ligands and export editable artifacts.
 
 **User prompt:**
-> Use the local PyMOL Figure Agent API. Load PDB 6LU7, show the protein as a clean cartoon,
+> Use the local MolWeaver API. Load PDB 6LU7, show the protein as a clean cartoon,
 > color chains distinctly, show organic ligands as sticks, remove solvent, render a PNG,
 > and export a .pse session and .pml script.
 
@@ -204,7 +204,7 @@ or presentations. Export metadata JSON for integration with automated reporting 
 **Goal:** Regenerate a figure from a previous job's artifacts.
 
 **User prompt:**
-> Use the saved .pml script and metadata from a previous PyMOL Figure Agent job to regenerate
+> Use the saved .pml script and metadata from a previous MolWeaver job to regenerate
 > the same figure and verify that the exported PNG matches the expected scene settings.
 
 **Endpoint(s):** `POST /render` or local `.pml` execution.

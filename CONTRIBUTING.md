@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for helping improve PyMOL Figure Agent. This project is intended for reproducible scientific visualization and AI-agent workflows.
+Thank you for helping improve MolWeaver. This project is intended for reproducible scientific visualization and AI-agent workflows.
 
 ## Branches
 

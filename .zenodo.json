@@ -1,7 +1,7 @@
 {
-  "title": "PyMOL Figure Agent",
+  "title": "MolWeaver",
   "upload_type": "software",
-  "description": "PyMOL Figure Agent is an open-source, local agent-ready control layer for PyMOL that enables AI agents, scripts and notebooks to build, modify, analyze, align, render and export molecular scenes through structured API operations.",
+  "description": "MolWeaver is an open-source, local agent-ready control layer for PyMOL that enables AI agents, scripts and notebooks to build, modify, analyze, align, render and export molecular scenes through structured API operations.",
   "creators": [
     {
       "name": "Gonzalez-Baez, Brandon"
@@ -9,6 +9,7 @@
   ],
   "license": "Apache-2.0",
   "keywords": [
+    "MolWeaver",
     "PyMOL",
     "structural biology",
     "molecular visualization",
@@ -28,7 +29,7 @@
   "related_identifiers": [
     {
       "scheme": "url",
-      "identifier": "https://github.com/BrandonGBz/pymol-figure-agent",
+      "identifier": "https://github.com/BrandonGBz/molweaver",
       "relation": "isSupplementTo"
     }
   ]

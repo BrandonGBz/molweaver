@@ -5,8 +5,8 @@ Linux x86_64, macOS Intel, and macOS Apple Silicon are supported experimentally 
 ## Quick install
 
 ```bash
-git clone https://github.com/BrandonGBz/pymol-figure-agent.git
-cd pymol-figure-agent
+git clone https://github.com/BrandonGBz/molweaver.git
+cd molweaver
 chmod +x install.sh start_server.sh
 ./install.sh
 ./start_server.sh

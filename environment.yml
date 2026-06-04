@@ -1,4 +1,4 @@
-name: pymol-figure-agent
+name: molweaver
 channels:
   - conda-forge
 dependencies:
