@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0] - Unreleased
+
+### Added
+
+- Optional MCP server exposing PyMOL Figure Agent capabilities as agent tools.
+- MCP tools: `render_molecular_figure`, `inspect_structure`, `measure_distance`,
+  `analyze_binding_site`, `align_structures`, `generate_site_report`, `export_pymol_script`.
+- MCP prompts: `create_publication_figure`, `inspect_active_site`, `align_and_compare_structures`,
+  `prepare_docking_pose_figure`, `render_md_snapshot`.
+- MCP resources for capabilities, presets, security model, and examples.
+- Full cross-platform support: Windows, Linux, and macOS tested.
+- MCP documentation (`docs/mcp.md`) and example client configuration.
+- Agent prompt recipes (`docs/agent-prompt-recipes.md`).
+- Zenodo DOI preparation (`.zenodo.json`, `docs/zenodo.md`).
+
 ## [0.2.0] - 2026-06-01
 
 ### Added

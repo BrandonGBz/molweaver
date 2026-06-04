@@ -21,10 +21,10 @@
 
 ## v0.3.x
 
-- MCP tools wrapping the structured scene operations
-- Agent tool schemas
-- Scene recipe templates
-- Better structured outputs for automation
+- MCP tools wrapping the structured scene operations (implemented in `feature/mcp-server`).
+- Agent tool schemas.
+- Scene recipe templates.
+- Better structured outputs for automation.
 
 ## Future: Virtual screening workflows
 
