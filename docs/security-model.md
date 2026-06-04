@@ -44,6 +44,18 @@ The project is not OWASP certified and does not claim compliance. It is designed
 - Prefer known public sources for downloads, such as RCSB.
 - Disable trusted raw-script execution by default.
 
+### MCP-specific controls
+
+The MCP server (`mcp_server.py`) adds additional safeguards:
+
+- **No raw PyMOL commands.** All MCP tools use structured operations with Pydantic validation. The trusted-script endpoint is not exposed through MCP.
+- **Strict tool schemas.** Every tool parameter is validated with type, range, and pattern constraints.
+- **stderr-only logging.** No log output is written to stdout, preventing protocol interference in stdio mode.
+- **No arbitrary filesystem access.** Local file paths are validated against allowed extensions and optional `PYMOL_ALLOWED_INPUT_DIR` restrictions.
+- **No shell execution.** All PyMOL operations run through the existing subprocess pipeline with controlled arguments.
+- **No URLs beyond RCSB PDB.** The server does not fetch from arbitrary URLs; only `pdb_id` downloads from the trusted RCSB PDB endpoint are supported.
+- **Descriptive analysis only.** Distance measurements and site analyses are geometric descriptions, not biochemical validations.
+
 ## Operational guidance
 
 When extending the API, add explicit validation, bounded resource limits and clear documentation for any new tool or endpoint. Do not silently add filesystem or shell access in agent-facing features.

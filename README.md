@@ -423,6 +423,21 @@ reflect this broader scope. See [docs/rename.md](docs/rename.md) for details.
 
 If you use MolWeaver in academic work, please cite the software using the metadata in [CITATION.cff](CITATION.cff). A Zenodo DOI will be added after the first archived GitHub release is published through Zenodo. See [docs/zenodo.md](docs/zenodo.md) for details.
 
+## MCP server
+
+PyMOL Figure Agent can optionally expose its local PyMOL control layer through
+[MCP](https://modelcontextprotocol.io) tools, allowing compatible AI agents to render
+molecular figures, inspect structures, measure distances, analyze sites and align
+structures through structured tool calls.
+
+```bash
+pip install -r requirements-mcp.txt
+python mcp_server.py
+```
+
+See [docs/mcp.md](docs/mcp.md) for full documentation including tool descriptions,
+client configuration, and security considerations.
+
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE).
