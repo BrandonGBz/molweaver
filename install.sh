@@ -48,54 +48,11 @@ log() {
   printf '\n%s\n' "$1"
 }
 
-require_python3() {
+python3_version_ok() {
   if ! command -v python3 >/dev/null 2>&1; then
-    echo "Python 3 no esta instalado o no esta en PATH." >&2
-    exit 1
+    return 1
   fi
-
-  python3 - <<'PY'
-import sys
-if sys.version_info < (3, 10):
-    raise SystemExit("Se requiere Python 3.10 o superior.")
-PY
-}
-
-ensure_venv() {
-  if [ ! -x "$VENV_PYTHON" ]; then
-    log "Creando entorno virtual .venv..."
-    python3 -m venv "$VENV_DIR"
-  fi
-
-  log "Actualizando pip e instalando dependencias..."
-  "$VENV_PYTHON" -m pip install --upgrade pip
-  "$VENV_PYTHON" -m pip install -r "$ROOT_DIR/requirements.txt"
-}
-
-ensure_env_file() {
-  if [ ! -f "$ROOT_DIR/.env" ] && [ -f "$ROOT_DIR/.env.example" ]; then
-    log "Creando .env desde .env.example..."
-    cp "$ROOT_DIR/.env.example" "$ROOT_DIR/.env"
-  fi
-}
-
-detect_package_manager() {
-  if command -v micromamba >/dev/null 2>&1; then
-    echo "micromamba"
-    return
-  fi
-
-  if command -v mamba >/dev/null 2>&1; then
-    echo "mamba"
-    return
-  fi
-
-  if command -v conda >/dev/null 2>&1; then
-    echo "conda"
-    return
-  fi
-
-  echo "local-micromamba"
+  python3 -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)" 2>/dev/null
 }
 
 download_local_micromamba() {
@@ -131,6 +88,22 @@ download_local_micromamba() {
     tar -xjf "$archive" -C "$MICROMAMBA_DIR"
     chmod +x "$MICROMAMBA_BIN"
   fi
+}
+
+detect_package_manager() {
+  if command -v micromamba >/dev/null 2>&1; then
+    echo "micromamba"
+    return
+  fi
+  if command -v mamba >/dev/null 2>&1; then
+    echo "mamba"
+    return
+  fi
+  if command -v conda >/dev/null 2>&1; then
+    echo "conda"
+    return
+  fi
+  echo "local-micromamba"
 }
 
 ensure_pymol_env() {
@@ -170,7 +143,32 @@ ensure_pymol_env() {
   "$PYMOL_PYTHON" -c "import pymol2; print('PyMOL/pymol2 ready')"
 }
 
-require_python3
+ensure_venv() {
+  local python_bin="python3"
+
+  if ! python3_version_ok; then
+    log "Python 3.10+ no encontrado en el sistema. Usando el Python del entorno PyMOL."
+    ensure_pymol_env
+    python_bin="$PYMOL_PYTHON"
+  fi
+
+  if [ ! -x "$VENV_PYTHON" ]; then
+    log "Creando entorno virtual .venv..."
+    "$python_bin" -m venv "$VENV_DIR"
+  fi
+
+  log "Actualizando pip e instalando dependencias..."
+  "$VENV_PYTHON" -m pip install --upgrade pip
+  "$VENV_PYTHON" -m pip install -r "$ROOT_DIR/requirements.txt"
+}
+
+ensure_env_file() {
+  if [ ! -f "$ROOT_DIR/.env" ] && [ -f "$ROOT_DIR/.env.example" ]; then
+    log "Creando .env desde .env.example..."
+    cp "$ROOT_DIR/.env.example" "$ROOT_DIR/.env"
+  fi
+}
+
 ensure_venv
 ensure_env_file
 ensure_pymol_env

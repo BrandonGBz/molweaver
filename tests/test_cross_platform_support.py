@@ -91,5 +91,6 @@ def test_discover_backend_missing_when_no_candidates(
 
 
 def test_portable_scripts_exist() -> None:
-    assert Path("install.sh").exists()
-    assert Path("start_server.sh").exists()
+    root = Path(__file__).resolve().parent.parent
+    assert (root / "install.sh").exists()
+    assert (root / "start_server.sh").exists()

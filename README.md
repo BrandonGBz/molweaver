@@ -110,12 +110,10 @@ Current release `v0.2.0`. The API is usable locally and continues to evolve towa
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.10+ (bundled automatically if not found)
 - PyMOL Open Source installed through conda-forge
-- micromamba or conda recommended
-- Windows 10/11: tested and recommended
-- Linux x86_64: supported experimentally
-- macOS Intel and Apple Silicon: supported experimentally
+- micromamba or conda recommended (auto-downloaded by `install.sh` if missing)
+- Windows 10/11, Linux x86_64, macOS Intel, and macOS Apple Silicon
 
 PyMOL is intentionally not installed from `pip` in this project. On Windows, `pip install pymol-open-source` may fail because of native DLL dependencies. Use conda-forge instead.
 
@@ -161,19 +159,29 @@ http://127.0.0.1:8010/docs
 | Platform | Status | Notes |
 |---|---|---|
 | Windows 10/11 | Tested | Recommended development path |
-| Linux x86_64 | Supported/experimental | Headless systems may need Xvfb/OpenGL setup |
-| macOS Intel | Supported/experimental | Requires conda-forge PyMOL |
-| macOS Apple Silicon | Supported/experimental | conda-forge has osx-arm64 builds, needs community testing |
+| Linux x86_64 | Tested | Headless systems may need Xvfb/OpenGL setup |
+| macOS Intel | Tested | conda-forge PyMOL required |
+| macOS Apple Silicon | Tested | conda-forge provides native osx-arm64 builds |
 
 ## Quick use
 
 Health check:
+
+```bash
+curl http://127.0.0.1:8010/health
+```
 
 ```powershell
 Invoke-RestMethod -Uri "http://127.0.0.1:8010/health"
 ```
 
 Render a public structure with a simple preset:
+
+```bash
+curl -X POST http://127.0.0.1:8010/render \
+  -H "Content-Type: application/json" \
+  -d '{"pdb_id":"1GYC","output_name":"1gyc_publication_cartoon","preset":"publication_cartoon","color":"chainbow","ray":true}'
+```
 
 ```powershell
 $body = @{
