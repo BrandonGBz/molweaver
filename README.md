@@ -3,6 +3,11 @@
 [![CI](https://github.com/BrandonGBz/pymol-figure-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/BrandonGBz/pymol-figure-agent/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/badge/release-v0.2.0-blue.svg)](CHANGELOG.md)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](README.md)
+[![PyMOL conda-forge](https://img.shields.io/badge/PyMOL-conda--forge-brightgreen.svg)](https://anaconda.org/conda-forge/pymol-open-source)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Citation](https://img.shields.io/badge/citation-CITATION.cff-blue.svg)](CITATION.cff)
 
 PyMOL Figure Agent is an open-source, local agent-ready PyMOL control layer for molecular visualization, structural inspection, alignment, measurement and reproducible figure generation.
 
@@ -395,15 +400,18 @@ Run the API on `127.0.0.1` by default. Do not expose it publicly without authent
 
 ## Roadmap
 
+See [docs/roadmap.md](docs/roadmap.md) for the full roadmap including virtual screening,
+molecular dynamics, and agent automation workflows.
+
 - `v0.1.x`: hardening, more presets, better errors, more tests.
 - `v0.2.x`: structured scene operations, editable `.pse` export, reproducible `.pml` export, selection-based remove/hide/show/color, distance and alignment workflows.
 - `v0.3.x`: MCP tools wrapping structured operations, agent tool schemas, scene recipe templates.
-- Future: molecular dynamics workflows such as selected frame rendering, pose comparison across time points, frame alignment, and MD figure panels.
+- Future: virtual screening workflows, molecular dynamics snapshot rendering, agent automation rules.
 - `v1.0.0`: stable public release.
 
 ## Citation
 
-If you use this software in academic work, please cite it. See [CITATION.cff](CITATION.cff).
+If you use PyMOL Figure Agent in academic work, please cite the software using the metadata in [CITATION.cff](CITATION.cff). A Zenodo DOI will be added after the first archived GitHub release is published through Zenodo. See [docs/zenodo.md](docs/zenodo.md) for details.
 
 ## License
 

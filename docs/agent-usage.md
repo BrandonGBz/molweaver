@@ -88,6 +88,7 @@ print(response.json())
 
 ## Guidance for agents
 
+- Agents should translate user intent into structured API operations whenever possible. Presets are starting points, not limits.
 - Prefer `pdb_id` for public examples.
 - Use `structure_path` only when the user explicitly provides a local file.
 - Never echo private paths in public documentation or commits.
@@ -96,3 +97,4 @@ print(response.json())
 - Treat geometry metrics, distances, and alignments as descriptive outputs.
 - Treat `.pse` and `.pml` outputs as local user artifacts, not repository assets.
 - Future MD workflows should be documented as planned capabilities until they are implemented and tested.
+- See [agent-prompt-recipes.md](agent-prompt-recipes.md) for prompt recipes that agents can follow to build, analyze, align, render, and export molecular scenes through the API.

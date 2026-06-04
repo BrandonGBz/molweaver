@@ -26,15 +26,29 @@
 - Scene recipe templates
 - Better structured outputs for automation
 
+## Future: Virtual screening workflows
+
+- Batch render selected docking poses.
+- Generate receptor-ligand pocket figures.
+- Measure ligand-pocket distances.
+- Export figure metadata for screening reports.
+- Support rule-based visual inspection templates.
+
 ## Future: Molecular dynamics workflows
 
-- Load selected frames from trajectory-compatible files.
-- Render representative conformations.
+- Render selected exported MD snapshots.
 - Compare poses across time points.
 - Align frames to a reference structure.
 - Measure distances across selected frames.
-- Generate figure panels from MD snapshots.
-- Export PyMOL sessions for selected MD scenes.
+- Generate multi-panel conformation figures.
+- Future support for trajectory-native workflows if feasible.
+
+## Future: Agent automation rules
+
+- Structured rules for virtual screening figure generation.
+- Structured rules for MD snapshot comparison.
+- Configurable scene recipes.
+- Reproducible prompt-to-figure workflows.
 
 ## v1.0.0
 

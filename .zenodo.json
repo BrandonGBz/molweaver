@@ -1,0 +1,35 @@
+{
+  "title": "PyMOL Figure Agent",
+  "upload_type": "software",
+  "description": "PyMOL Figure Agent is an open-source, local agent-ready control layer for PyMOL that enables AI agents, scripts and notebooks to build, modify, analyze, align, render and export molecular scenes through structured API operations.",
+  "creators": [
+    {
+      "name": "Gonzalez-Baez, Brandon"
+    }
+  ],
+  "license": "Apache-2.0",
+  "keywords": [
+    "PyMOL",
+    "structural biology",
+    "molecular visualization",
+    "structural bioinformatics",
+    "bioinformatics",
+    "computational biology",
+    "AI agents",
+    "molecular modeling",
+    "reproducible research",
+    "molecular docking",
+    "molecular dynamics",
+    "protein structure",
+    "FastAPI",
+    "scientific visualization",
+    "research software"
+  ],
+  "related_identifiers": [
+    {
+      "scheme": "url",
+      "identifier": "https://github.com/BrandonGBz/pymol-figure-agent",
+      "relation": "isSupplementTo"
+    }
+  ]
+}
